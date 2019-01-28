@@ -1,20 +1,13 @@
 const ldap = require('ldapjs');
 
-function initServer() {
-  const server = ldap.createServer();
-  server.listen(1389, '127.0.0.1', () => {
-    console.log('LDAP server listening at: ' + server.url);
-  });
-}
+const client = ldap.createClient({
+    url: 'ldap://127.0.0.1:389'
+});
 
 function connect() {
-  const client = ldap.createClient({
-    url: 'ldap://127.0.0.1:1389'
-  });
-  
-  console.log("CONNECT RUNNING")
-  client.bind('cn=root', 'secret', (err) => {
-    console.log(err)
+  client.bind('cn=admin,dc=bla,dc=com', 'bla', (err) => {
+    if (!err) console.log("CONNECTED");
+    else console.log(err);
   });
 }
 
@@ -24,30 +17,35 @@ function get() {
   //   assert.ifError(err);
   // });
 }
-  
+
 function add() {
-  console.log("ADD RUNNING")
-  // const entry = {
-  //   cn: 'foo',
-  //   sn: 'bar',
-  //   email: ['foo@bar.com', 'foo1@bar.com'],
-  //   objectclass: 'fooPerson'
-  // };
-  //
-  // client.add('cn=foo, o=example', entry, (err) => {
-  //   assert.ifError(err);
-  // });
+  console.log("ADD RUNNING");
+  const entry = {
+    objectClass: ['top','person','organizationalPerson','inetOrgPerson','posixAccount','shadowAccount'],
+    uid: 'jean.pierre',
+    givenName: 'JEAN PIERRE',
+    sn: 'JEAN PIERRE',
+    cn: 'JEAN PIERRE',
+    userPassword: 'JEAN PIERRE',
+    homeDirectory: '/home/jp',
+    loginShell: '/bin/bash',
+    uidNumber: 1201,
+    gidNumber: 1201
+  };
+  
+  client.add('uid=jeanpierre,cn=admin,dc=bla,dc=com', entry, (err) => {
+    console.log(err);
+  });
 }
   
 function del() {
-  console.log("DEL RUNNING")
-  // client.del('cn=foo, o=example', (err) => {
-  //   assert.ifError(err);
-  // });
+  console.log("DEL RUNNING");
+  client.del('uid=jeanpierre,cn=admin,dc=bla,dc=com', (err) => {
+    console.log(err);
+  });
 }
 
 module.exports.connect = connect;
 module.exports.get = get;
 module.exports.add = add;
 module.exports.del = del;
-module.exports.initServer = initServer;

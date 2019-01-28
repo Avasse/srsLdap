@@ -9,16 +9,14 @@ router.get('/', (req, res, next) => {
   res.send('GET OK');
 });
 
-router.post('/', (req, res, next) => {
-  //TODO: CREATE USER
+router.put('/', (req, res, next) => {
   LDAP.add();
-  res.send('POST OK');
+  res.send('PUT OK');
 });
 
-router.put('/', (req, res, next) => {
-  //TODO: DELETE USER
+router.delete('/', (req, res, next) => {
   LDAP.del();
-  res.send('PUT OK');
+  res.send('DELETE OK');
 });
 
 module.exports = router;

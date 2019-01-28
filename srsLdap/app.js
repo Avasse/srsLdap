@@ -40,7 +40,7 @@ app.use((err, req, res, next) => {
   res.render('error');
 });
 
-LDAP.initServer();
+//LDAP.initServer();
 LDAP.connect();
 
 module.exports = app;
