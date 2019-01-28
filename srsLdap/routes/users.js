@@ -14,6 +14,11 @@ router.put('/', (req, res, next) => {
   res.send('PUT OK');
 });
 
+router.post('/', (req, res, next) => {
+  LDAP.update();
+  res.send('POST OK');
+});
+
 router.delete('/', (req, res, next) => {
   LDAP.del();
   res.send('DELETE OK');

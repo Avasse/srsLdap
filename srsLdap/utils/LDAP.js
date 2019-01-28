@@ -22,7 +22,6 @@ function add() {
   console.log("ADD RUNNING");
   const entry = {
     objectClass: ['top','person','organizationalPerson','inetOrgPerson','posixAccount','shadowAccount'],
-    uid: 'jean.pierre',
     givenName: 'JEAN PIERRE',
     sn: 'JEAN PIERRE',
     cn: 'JEAN PIERRE',
@@ -45,7 +44,22 @@ function del() {
   });
 }
 
+function update() {
+  var change = new ldap.Change({
+    operation: 'replace',
+    modification: {
+      givenName: "JPP2"
+    }
+  });
+
+  client.modify('uid=jeanpierre,cn=admin,dc=bla,dc=com', change, (err) => {
+    if (!err) console.log("UPDATED");
+    else console.log(err);
+  })
+}
+
 module.exports.connect = connect;
 module.exports.get = get;
 module.exports.add = add;
 module.exports.del = del;
+module.exports.update = update;
