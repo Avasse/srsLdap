@@ -12,10 +12,33 @@ function connect() {
 }
 
 function get() {
-  console.log("CONNECT RUNNING")
-  // client.bind('cn=root', 'secret', (err) => {
-  //   assert.ifError(err);
-  // });
+  const opts = {
+    scope: 'sub'
+  };
+
+  return new Promise(function(resolve, reject) {
+    client.search('dc=bla,dc=com', opts, function(err, res) {
+      let users = [];
+
+      if (!err) console.log("SEARCH OK");
+      else console.log(err);
+
+      res.on('searchEntry', function(entry) {
+        if(entry.object.givenName) {
+          users.push(entry.object);      
+        }
+      });
+
+      res.on('error', function(err) {
+        console.error('error search: ' + err.message);
+      });
+
+      res.on('end', function(result) {
+        console.log('users: ' + users);
+        resolve(users);
+      });
+    });
+  })
 }
 
 function add() {

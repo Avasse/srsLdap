@@ -5,8 +5,9 @@ let router = express.Router();
 
 /* GET users listing. */
 router.get('/', (req, res, next) => {
-  LDAP.get()
-  res.send('GET OK');
+  LDAP.get().then(users => {
+  	res.status(200).json(users);
+  })
 });
 
 router.put('/', (req, res, next) => {
