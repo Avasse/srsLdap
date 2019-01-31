@@ -13,7 +13,7 @@
       <td class="text-xs-right">{{ props.item.age }}</td>
       <td class="text-xs-right">{{ props.item.games }}</td>
       <td class="justify-center layout px-0">
-        <v-icon small class="mr-2" @click="console.log('edit')">edit</v-icon>
+        <v-icon small class="mr-2" @click="$emit('edit', props.item.uid)">edit</v-icon>
         <v-icon small @click="onDeleteClick(props.item.dn)">delete</v-icon>
       </td>
     </template>
@@ -21,16 +21,28 @@
       <v-btn color="primary" @click="console.log('reset')">Reset</v-btn>
     </template>
   </v-data-table>
-  <div v-else>LOADING</div>
+
+  <v-dialog v-else-if="loaded && dialogDelete" max-width="290">
+    <v-card>
+      <v-card-title class="headline">Confirm Deletion</v-card-title>
+      <v-card-text>Are you sure you want to delete this user ?</v-card-text>
+      <v-card-actions>
+        <v-spacer/>
+        <v-btn color="green darken-1" flat="flat" @click="deleteDialog = false">Disagree</v-btn>
+        <v-btn color="red darken-1" flat="flat" @click="onDeleteConfirm">Agree</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <div v-else-if="!loaded">LOADING</div>
 </template>
 
 <script>
   import { mapActions, mapGetters } from 'vuex'
 
   export default {
-    name: 'UsersList',
+    name: 'Dashboard',
     data: () => ({
-      dialog : false,
       headers: [
         { text: 'Name', value: 'cn' },
         { text: 'Pseudo', value: 'givenName' },
@@ -42,7 +54,9 @@
         { text: 'Actions', value: 'actions', sortable: false }
       ],
 
-      loaded: false
+      loaded      : false,
+      deleteDialog: false,
+      selectedDN  : null
     }),
 
     computed: {
@@ -51,9 +65,8 @@
       })
     },
 
-    async created () {
-      await this.fetchUsers()
-      this.loaded = true
+    created () {
+      this.init()
     },
 
     methods: {
@@ -62,23 +75,22 @@
         deleteUser: 'ldap/deleteUser'
       }),
 
-      // editItem (item) {
-      // },
+      async init () {
+        this.loaded = false
+        await this.fetchUsers()
+        this.loaded = true
+      },
 
-      deleteItem (dn) {
-        confirm('Are you sure you want to delete this item?')
-        this.deleteUser(dn)
+      onDeleteClick (dn) {
+        this.selectedDn   = dn
+        this.deleteDialog = true
+      },
+
+      async onDeleteConfirm () {
+        this.deleteUser(this.selectedDN)
+        this.selectedDn = null
       }
-
-      // close () {
-      //   this.dialog = false
-      //   setTimeout(() => {
-      //     this.editedItem  = Object.assign({}, this.defaultItem)
-      //     this.editedIndex = -1
-      //   }, 300)
-      // }
     }
-
   }
 </script>
 

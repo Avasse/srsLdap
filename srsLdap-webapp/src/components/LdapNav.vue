@@ -4,16 +4,14 @@
     <v-toolbar-title>My Fkin LDAP</v-toolbar-title>
     <v-spacer></v-spacer>
     <v-toolbar-items class="hidden-sm-and-down">
-      <v-btn flat :to="{name: 'add'}">Ajouter</v-btn>
-      <v-btn flat :to="{name: 'update'}">Modifier</v-btn>
-      <v-btn flat>Supprimer</v-btn>
+      <v-btn flat @click="$emit('addUser')">Ajouter</v-btn>
     </v-toolbar-items>
   </v-toolbar>
 </template>
 
 <script>
   export default {
-    name: 'ldapNav'
+    name: 'LdapNav'
   }
 </script>
 
