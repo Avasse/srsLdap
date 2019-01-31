@@ -14,7 +14,7 @@
       <td class="text-xs-right">{{ props.item.games }}</td>
       <td class="justify-center layout px-0">
         <v-icon small class="mr-2" @click="console.log('edit')">edit</v-icon>
-        <v-icon small @click="console.log('delete')">delete</v-icon>
+        <v-icon small @click="onDeleteClick(props.item.dn)">delete</v-icon>
       </td>
     </template>
     <template slot="no-data">
@@ -58,16 +58,17 @@
 
     methods: {
       ...mapActions({
-        fetchUsers: 'ldap/fetchUsers'
-      })
+        fetchUsers: 'ldap/fetchUsers',
+        deleteUser: 'ldap/deleteUser'
+      }),
 
       // editItem (item) {
       // },
 
-      // deleteItem (item) {
-      //   const index = this.desserts.indexOf(item)
-      //   confirm('Are you sure you want to delete this item?')
-      // },
+      deleteItem (dn) {
+        confirm('Are you sure you want to delete this item?')
+        this.deleteUser(dn)
+      }
 
       // close () {
       //   this.dialog = false
