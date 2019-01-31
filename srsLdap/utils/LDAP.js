@@ -8,10 +8,10 @@ function connect() {
   client.bind('cn=admin,dc=bla,dc=com', 'bla', (err) => {
     if (!err) console.log("CONNECTED");
     else console.log(err);
-  });
+  })
 }
 
-function get() {
+function getAllUsers() {
   const opts = {
     scope: 'sub'
   };
@@ -29,19 +29,13 @@ function get() {
         }
       });
 
-      res.on('error', function(err) {
-        console.error('error search: ' + err.message);
-      });
-
-      res.on('end', function(result) {
-        console.log('users: ' + users);
-        resolve(users);
-      });
+      res.on('error', (err) => console.error('error search: ' + err.message));
+      res.on('end', (result) => resolve(users) );
     });
   })
 }
 
-function getOne(dn) {
+function getOneUser(dn) {
   const opts = {
     scope: 'base'
   };
@@ -53,44 +47,45 @@ function getOne(dn) {
       if (!err) console.log("SEARCH OK");
       else console.log(err);
 
-      res.on('searchEntry', function(entry) {
-        if(entry.object.givenName) {
-          user = entry.object;
-        }
-      });
-
-      res.on('error', function(err) {
-        console.error('error search: ' + err.message);
-      });
-
-      res.on('end', function(result) {
-        console.log('user: ' + user);
-        resolve(user);
-      });
-    });
+      res.on('searchEntry', (entry) => user = entry.object);
+      res.on('error', (err) => console.error('error search: ' + err.message));
+      res.on('end', (result) => resolve(user))
+    })
   })
 }
 
-function add() {
-  console.log("ADD RUNNING");
+function addUser(userObject) {
   const entry = {
-    objectClass: ['top','person','organizationalPerson','inetOrgPerson','posixAccount','shadowAccount'],
-    givenName: 'JEAN PIERRE',
-    sn: 'JEAN PIERRE',
-    cn: 'JEAN PIERRE',
-    userPassword: 'JEAN PIERRE',
-    homeDirectory: '/home/jp',
-    loginShell: '/bin/bash',
-    uidNumber: 1201,
-    gidNumber: 1201
+    objectClass: ['top','person','organizationalPerson','inetOrgPerson','posixAccount','shadowAccount', 'gamer'],
+    sn: userObject.sn,
+    givenName: userObject.givenName,
+    cn: userObject.cn,
+    userPassword: userObject.userPassword,
+    homeDirectory: userObject.homeDirectory,
+    uidNumber: getNextUid(),
+    gidNumber: getNextUid(),
+    loginShell: userObject.loginShell,
+    uid: userObject.uid,
+    pseudo: userObject.pseudo,
+    age: userObject.age,
+    games: userObject.games,
+    steamAccount: userObject.steamAccount,
+    mail: userObject.mail
   };
+
+  let dn = 'uid=' + entry.uid + ',cn=admin,dc=bla,dc=com';
+  // if(userObject.group != 'admin') {
+  //   dn = 'uid=' + entry.uid + ',ou=' + userObject.group + ',dc=bla,dc=com';
+  // }
   
-  client.add('uid=jeanpierre3,cn=admin,dc=bla,dc=com', entry, (err) => {
-    console.log(err);
-  });
+  return new Promise(function(resolve, reject) {
+    client.add(dn, entry, (error) => {
+      resolve({error: error, dn: dn})
+    })
+  })
 }
   
-function del(dn) {
+function deleteUser(dn) {
   return new Promise(function(resolve, reject) {
     client.del(dn, (error) => {
       resolve(error)
@@ -98,23 +93,58 @@ function del(dn) {
   })
 }
 
-function update(dn) {
+function updateUser(userObject) {
   var modifications = new ldap.Change({
     operation: 'replace',
     modification: {
-      givenName: "JPP2"
+      sn: userObject.sn,
+      givenName: userObject.givenName,
+      cn: userObject.cn,
+      userPassword: userObject.userPassword,
+      homeDirectory: userObject.homeDirectory,
+      loginShell: userObject.loginShell,
+      uid: userObject.uid,
+      pseudo: userObject.pseudo,
+      age: userObject.age,
+      games: userObject.games,
+      steamAccount: userObject.steamAccount,
+      mail: userObject.mail
     }
-  });
+  })
 
-  client.modify(dn, modifications, (err) => {
-    if (!err) console.log("UPDATED");
-    else console.log(err);
+  return new Promise(function(resolve, reject) {
+    client.modify(userObject.dn, modifications, (error) => {
+      resolve({error: error, dn: userObject.dn})
+    })
   })
 }
 
+function getMaxUid() {
+  let uids = [];
+  client.search('dc=bla,dc=com', opts, function(err, res) {
+    if (!err) console.log("SEARCH OK");
+    else console.log(err);
+
+    res.on('searchEntry', function(entry) {
+      if(entry.object.uidNumber) {
+        uids.push(entry.object.uidNumber);
+      }
+      if(entry.object.gidNumber) {
+        uids.push(entry.object.gidNumber);
+      }
+    });
+  });
+  return uids.reduce((prev, current) => (prev > current) ? prev : current);
+}
+
+function getNextUid() {
+  return getMaxUid() + 1;
+}
+
+module.exports.getAllUsers = getAllUsers;
+module.exports.getOneUser = getOneUser;
+module.exports.addUser = addUser;
+module.exports.deleteUser = deleteUser;
+module.exports.updateUser = updateUser;
+
 module.exports.connect = connect;
-module.exports.get = get;
-module.exports.getOne = getOne;
-module.exports.add = add;
-module.exports.del = del;
-module.exports.update = update;
