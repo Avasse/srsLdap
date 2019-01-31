@@ -11,7 +11,7 @@
     name   : 'Update',
     methods: {
       ...mapActions({
-        updateUser: 'ldapStore/updateUser'
+        updateUser: 'ldap/updateUser'
       })
     }
   }

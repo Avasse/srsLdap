@@ -1,19 +1,19 @@
 <template>
   <v-app>
-    <ldap-nav/>
+    <ldap-nav />
     <v-content>
       <v-container fill-height justify-center>
-        <router-view/>
+        <router-view />
       </v-container>
     </v-content>
   </v-app>
 </template>
 
 <script>
-  import LdapNav from './components/ldapNav'
+import LdapNav from './components/ldapNav'
 
-  export default {
-    name      : 'App',
-    components: { LdapNav }
-  }
+export default {
+  name: 'App',
+  components: { LdapNav }
+}
 </script>

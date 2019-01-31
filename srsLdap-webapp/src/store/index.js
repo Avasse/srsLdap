@@ -1,13 +1,13 @@
-import Vue       from 'vue'
-import Vuex      from 'vuex'
-import ldapStore from './ldap.store'
-import userStore from './user.store'
+import Vue  from 'vue'
+import Vuex from 'vuex'
+import ldap from './ldap.store'
+import user from './user.store'
 
 Vue.use(Vuex)
 
 const stores = {
-  userStore,
-  ldapStore
+  user,
+  ldap
 }
 
 const state     = {}
