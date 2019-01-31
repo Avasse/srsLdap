@@ -26,10 +26,13 @@ const mutations = {
 
 const actions = {
   async fetchUsers ({ commit }, uid) {
-    const res = await axios.get('http://localhost:3000/users/', uid).then(res => res.data)
+    const res = await axios.get('http://localhost:3000/users/', uid).then(res => {
+      console.log(res.data)
+      return res.data
+    })
     commit('SET_USERS', res)
   },
-  
+
   async addUser ({ commit }, user) {
     const res = axios.put('http://localhost:3000/users/', user).then(res => res.error)
     if (res === null) commit('ADD_USER', user)

@@ -5,14 +5,12 @@ let router = express.Router();
 
 /* GET users listing. */
 router.get('/', (req, res, next) => {
-  LDAP.get().then(users => {
-  	res.status(200).json(users);
-  })
+  LDAP.get().then(users => res.status(200).json(users));
 });
 
 router.put('/', (req, res, next) => {
   LDAP.add();
-  res.send('PUT OK');
+  res.status(200).send({error: null});
 });
 
 router.post('/', (req, res, next) => {
@@ -21,8 +19,13 @@ router.post('/', (req, res, next) => {
 });
 
 router.delete('/', (req, res, next) => {
-  LDAP.del();
-  res.send('DELETE OK');
+  LDAP.del(req.body.dn).then((err) => {
+  	if(err) {
+  		res.status(404).send({error: err});
+  	} else {
+  		res.status(200).send({error: null});
+  	}
+  });
 });
 
 module.exports = router;

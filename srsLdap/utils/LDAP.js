@@ -41,6 +41,36 @@ function get() {
   })
 }
 
+function getOne(dn) {
+  const opts = {
+    scope: 'base'
+  };
+
+  return new Promise(function(resolve, reject) {
+    client.search(dn, opts, function(err, res) {
+      let user = null;
+
+      if (!err) console.log("SEARCH OK");
+      else console.log(err);
+
+      res.on('searchEntry', function(entry) {
+        if(entry.object.givenName) {
+          user = entry.object;
+        }
+      });
+
+      res.on('error', function(err) {
+        console.error('error search: ' + err.message);
+      });
+
+      res.on('end', function(result) {
+        console.log('user: ' + user);
+        resolve(user);
+      });
+    });
+  })
+}
+
 function add() {
   console.log("ADD RUNNING");
   const entry = {
@@ -55,27 +85,28 @@ function add() {
     gidNumber: 1201
   };
   
-  client.add('uid=jeanpierre,cn=admin,dc=bla,dc=com', entry, (err) => {
+  client.add('uid=jeanpierre3,cn=admin,dc=bla,dc=com', entry, (err) => {
     console.log(err);
   });
 }
   
-function del() {
-  console.log("DEL RUNNING");
-  client.del('uid=jeanpierre,cn=admin,dc=bla,dc=com', (err) => {
-    console.log(err);
-  });
+function del(dn) {
+  return new Promise(function(resolve, reject) {
+    client.del(dn, (error) => {
+      resolve(error)
+    })
+  })
 }
 
-function update() {
-  var change = new ldap.Change({
+function update(dn) {
+  var modifications = new ldap.Change({
     operation: 'replace',
     modification: {
       givenName: "JPP2"
     }
   });
 
-  client.modify('uid=jeanpierre,cn=admin,dc=bla,dc=com', change, (err) => {
+  client.modify(dn, modifications, (err) => {
     if (!err) console.log("UPDATED");
     else console.log(err);
   })
@@ -83,6 +114,7 @@ function update() {
 
 module.exports.connect = connect;
 module.exports.get = get;
+module.exports.getOne = getOne;
 module.exports.add = add;
 module.exports.del = del;
 module.exports.update = update;

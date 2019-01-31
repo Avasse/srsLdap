@@ -5,11 +5,13 @@
     :items="users"
     class="elevation-1">
     <template slot="items" slot-scope="props">
-      <td>{{ props.item.name }}</td>
-      <td class="text-xs-right">{{ props.item.calories }}</td>
-      <td class="text-xs-right">{{ props.item.fat }}</td>
-      <td class="text-xs-right">{{ props.item.carbs }}</td>
-      <td class="text-xs-right">{{ props.item.protein }}</td>
+      <td>{{ props.item.cn }}</td>
+      <td class="text-xs-right">{{ props.item.givenName }}</td>
+      <td class="text-xs-right">{{ props.item.mail }}</td>
+      <td class="text-xs-right">{{ props.item.homeDirectory }}</td>
+      <td class="text-xs-right">{{ props.item.loginShell }}</td>
+      <td class="text-xs-right">{{ props.item.age }}</td>
+      <td class="text-xs-right">{{ props.item.games }}</td>
       <td class="justify-center layout px-0">
         <v-icon small class="mr-2" @click="console.log('edit')">edit</v-icon>
         <v-icon small @click="console.log('delete')">delete</v-icon>
@@ -30,17 +32,14 @@
     data: () => ({
       dialog : false,
       headers: [
-        {
-          text    : 'Dessert (100g serving)',
-          align   : 'left',
-          sortable: false,
-          value   : 'name'
-        },
-        { text: 'Calories', value: 'calories' },
-        { text: 'Fat (g)', value: 'fat' },
-        { text: 'Carbs (g)', value: 'carbs' },
-        { text: 'Protein (g)', value: 'protein' },
-        { text: 'Actions', value: 'name', sortable: false }
+        { text: 'Name', value: 'cn' },
+        { text: 'Pseudo', value: 'givenName' },
+        { text: 'Mail', value: 'mail', sortable: false },
+        { text: 'HomeDir', value: 'homeDirectory', sortable: false },
+        { text: 'LoginShell', value: 'loginShell', sortable: false },
+        { text: 'Age', value: 'age' },
+        { text: 'Games', value: 'games' },
+        { text: 'Actions', value: 'actions', sortable: false }
       ],
 
       loaded: false
@@ -54,7 +53,6 @@
 
     async created () {
       await this.fetchUsers()
-      console.log('toto')
       this.loaded = true
     },
 
