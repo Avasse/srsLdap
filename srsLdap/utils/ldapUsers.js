@@ -2,30 +2,22 @@ const ldap = require('ldapjs');
 const { client } = require('./client');
 
 function getAllUsers() {
-  const opts = {
-    scope: 'sub'
-  };
-
   return new Promise(function(resolve, reject) {
-    client.search('ou=people,dc=bla,dc=com', opts, function(err, res) {
+    client.search('ou=people,dc=bla,dc=com', { scope: 'sub' }, function(err, res) {
       let users = [];
       res.on('searchEntry', (entry) => users.push(entry.object));
-      res.on('error', (err) => console.error('error search: ' + err.message));
+      res.on('error', (err) => reject(err));
       res.on('end', (result) => resolve(users) );
     });
   })
 }
 
 function getOneUser(dn) {
-  const opts = {
-    scope: 'base'
-  };
-
-  return new Promise(function(resolve, reject) {
-    client.search(dn, opts, function(err, res) {
+  return new Promise((resolve, reject) => {
+    client.search(dn, { scope: 'base' }, (err, res) => {
       let user = null;
       res.on('searchEntry', (entry) => user = entry.object);
-      res.on('error', (err) => console.error('error search: ' + err.message));
+      res.on('error', (err) => reject(err));
       res.on('end', (result) => resolve(user))
     })
   })
@@ -38,18 +30,19 @@ async function addUser(user) {
   user.gidNumber = userUid;
   user.objectClass = ['top','person','organizationalPerson','inetOrgPerson','posixAccount','shadowAccount', 'gamer'];
   
-  return new Promise(function(resolve, reject) {
-    client.add(dn, user, (error) => {
-      resolve({error: error, dn: dn})
+  return new Promise((resolve, reject) => {
+    client.add(dn, user, (err) => {
+      if (err) reject(err)
+      else resolve({ dn: dn })
     })
   })
 }
   
 function deleteUser(dn) {
-  return new Promise(function(resolve, reject) {
+  return new Promise((resolve, reject) => {
     client.del(dn, (err) => {
       if (err) reject(err)
-      else resolve(err)
+      else resolve({ dn: dn })
     })
   })
 }
@@ -67,9 +60,10 @@ function updateUser(user) {
     }))
   })
 
-  return new Promise(function(resolve, reject) {
-    client.modify(user.dn, modifications, (error) => {
-      resolve({error: error, dn: user.dn})
+  return new Promise((resolve, reject) => {
+    client.modify(user.dn, modifications, (err) => {
+      if (err) reject(err)
+      else resolve({ dn: user.dn })
     })
   })
 }

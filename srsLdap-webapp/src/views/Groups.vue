@@ -1,5 +1,5 @@
 <template>
-    <div v-if="loaded" class="content">
+  <div v-if="loaded" class="content">
     <v-toolbar flat color="white">
       <v-toolbar-title>LDAP</v-toolbar-title>
       <v-spacer/>
@@ -27,10 +27,10 @@
   export default {
     name: 'Groups',
     data: () => ({
-      loaded: false,
+      loaded : false,
       headers: [
         { text: 'Description', value: 'description', sortable: true }
-      ],
+      ]
     }),
 
     computed: {

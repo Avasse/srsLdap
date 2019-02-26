@@ -37,11 +37,11 @@
       </v-dialog>
     </v-layout>
 
-    <add-dialog 
+    <add-dialog
       v-if="userDialog"
       :editable-user="selectedUser"
-      @close="onUserDialogClose" 
-      @add="onAddConfirm" 
+      @close="onUserDialogClose"
+      @add="onAddConfirm"
       @update="onUpdateConfirm"/>
   </div>
 
@@ -49,13 +49,13 @@
 </template>
 
 <script>
+  import AddDialog                  from '@/components/AddDialog'
   import { mapActions, mapGetters } from 'vuex'
-  import AddDialog from '@/components/AddDialog'
 
   export default {
-    name: 'Users',
-    components:  { AddDialog },
-    data: () => ({
+    name      : 'Users',
+    components: { AddDialog },
+    data      : () => ({
       headers: [
         { text: 'Name', value: 'cn' },
         { text: 'Pseudo', value: 'givenName' },
@@ -69,7 +69,7 @@
 
       loaded      : false,
       deleteDialog: false,
-      userDialog   : false,
+      userDialog  : false,
       selectedUser: null
     }),
 
@@ -102,9 +102,9 @@
       },
 
       async onAddConfirm (user) {
-        this.userDialog = false
+        // this.userDialog = false
         await this.addUser(user)
-        this.selectedUser = null
+        // this.selectedUser = null
         this.init()
       },
 
@@ -133,7 +133,7 @@
       },
 
       onUserDialogClose () {
-        this.userDialog = false
+        this.userDialog   = false
         this.selectedUser = null
       }
     }
