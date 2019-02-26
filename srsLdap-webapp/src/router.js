@@ -1,4 +1,5 @@
-import Dashboard from '@/views/Dashboard'
+import Users from '@/views/Users'
+import Groups from '@/views/Groups'
 import Vue       from 'vue'
 import Router    from 'vue-router'
 
@@ -8,8 +9,13 @@ export default new Router({
   routes: [
     {
       path     : '/',
-      name     : 'Dashboard',
-      component: Dashboard
+      name     : 'Users',
+      component: Users
+    },
+    {
+      path     : '/groups',
+      name     : 'Groups',
+      component: Groups
     }
   ]
 })

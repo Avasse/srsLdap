@@ -1,42 +1,47 @@
-let LDAP = require('../utils/LDAP');
-
-let express = require('express');
-let router = express.Router();
+const express = require('express');
+const router = express.Router();
+const usersLDAP = require('../utils/ldapUsers');
 
 /* GET users listing. */
 router.get('/', (req, res, next) => {
-  LDAP.getAllUsers().then(users => res.status(200).json(users));
+  console.log("RUNNING GET USERS --------------------------------");
+  try {
+    usersLDAP.getAllUsers().then(users => res.status(200).json(users));
+  } catch (e) {
+    console.log(e);
+  }
 });
 
 /** CREATE user */
 router.put('/', (req, res, next) => {
-    const user = req.body.user;
-
-    LDAP.addUser(user).then((datas) => {
+  console.log("RUNNING PUT USER --------------------------------");
+  const user = req.body.user;
+  usersLDAP.addUser(user).then((datas) => {
     if (datas.error) {
       res.status(404).send({error: datas.error});
     } else {
-      LDAP.getOneUser(datas.dn).then((user) => res.status(200).json(user));
+      usersLDAP.getOneUser(datas.dn).then((user) => res.status(200).json(user));
     }
   });
 });
 
 /** MODIFY user */
 router.post('/', (req, res, next) => {
+  console.log("RUNNING POST USER -------------------------------");
   const user = req.body.user;
-
-  LDAP.updateUser(user).then((datas) => {
+  usersLDAP.updateUser(user).then((datas) => {
     if (datas.error) {
       res.status(404).send({error: datas.error});
     } else {
-      LDAP.getOneUser(datas.dn).then((user) => res.status(200).json(user));
+      usersLDAP.getOneUser(datas.dn).then((user) => res.status(200).json(user));
     }
   });
 });
 
 /** DELETE user */
-router.delete('/', (req, res, next) => {
-  LDAP.deleteUser(req.body.dn).then((err) => {
+router.put('/delete', (req, res, next) => {
+  console.log("RUNNING DELETE USER --------------------------------");
+  usersLDAP.deleteUser(req.body.dn).then((err) => {
   	if(err) {
   		res.status(404).send({error: err});
   	} else {

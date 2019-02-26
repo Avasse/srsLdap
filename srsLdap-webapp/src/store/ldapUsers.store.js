@@ -31,17 +31,17 @@ const actions = {
   },
   
   async addUser ({ commit }, user) {
-    const res = axios.put('http://localhost:3000/users/', user).then(res => res.error)
+    const res = await axios.put('http://localhost:3000/users/', {user: user}).then(res => res.error)
     if (res === null) commit('ADD_USER', user)
   },
   
   async updateUser ({ commit }, user) {
-    const res = await axios.post('http://localhost:3000/users/', user).then(res => res.error)
+    const res = await axios.post('http://localhost:3000/users/', {user: user}).then(res => res.error)
     if (res === null) commit('UPDATE_USER', res)
   },
   
   async deleteUser ({ commit }, dn) {
-    const res = await axios.delete('http://localhost:3000/users/', dn).then(res => res.error)
+    const res = await axios.put('http://localhost:3000/users/delete', {dn: dn}).then(res => res.error)
     if (res === null) commit('DELETE_USER', res)
   }
 }

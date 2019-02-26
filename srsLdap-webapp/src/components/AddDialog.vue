@@ -11,7 +11,7 @@
               <v-text-field v-model="user.sn" label="Surname*" required/>
             </v-flex>
             <v-flex xs12 sm6 md4>
-              <v-text-field v-model="user.givenName" label="Given Name" hint="example of helper text only on focus"/>
+              <v-text-field v-model="user.givenName" label="Given Name" required/>
             </v-flex>
             <v-flex xs12 sm6 md4>
               <v-text-field v-model="user.cn" label="Common Name*" required/>
@@ -60,9 +60,9 @@
         </v-container>
       </v-card-text>
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer/>
         <v-btn color="blue darken-1" flat @click="$emit('close')">Close</v-btn>
-        <v-btn color="blue darken-1" flat @click="$emit('add', user)">Save</v-btn>
+        <v-btn color="blue darken-1" flat @click="onSave()">Save</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -71,6 +71,14 @@
 <script>
   export default {
     name: 'AddDialog',
+
+    props: {
+      editableUser: {
+        type: Object,
+        default: () => {}
+      },
+    },
+
     data () {
       return {
         dialog: true,
@@ -91,7 +99,18 @@
 
         games: ['WoW', 'FFXIV', 'Rocket League']
       }
-    }
+    },
+
+    created () {
+      if (this.editableUser && Object.keys(this.editableUser).length !== 0) this.user = JSON.parse(JSON.stringify(this.editableUser))
+    },
+
+    methods: {
+      onSave () {
+        if (this.editableUser && Object.keys(this.editableUser).length !== 0) this.$emit('update', this.user)
+        else this.$emit('add', this.user)
+      }
+    },
   }
 </script>
 
