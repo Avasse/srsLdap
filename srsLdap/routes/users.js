@@ -28,8 +28,7 @@ router.put('/', (req, res, next) => {
 /** MODIFY user */
 router.post('/', (req, res, next) => {
   console.log("RUNNING POST USER -------------------------------");
-  const user = req.body.user;
-  usersLDAP.updateUser(user).then((datas) => {
+  usersLDAP.updateUser(req.body.user).then((datas) => {
     if (datas.error) {
       res.status(404).send({error: datas.error});
     } else {
