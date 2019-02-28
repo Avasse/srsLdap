@@ -3,7 +3,7 @@ const { client } = require('./client');
 
 function getAllUsers() {
   return new Promise(function(resolve, reject) {
-    client.search('ou=people,dc=bla,dc=com', { scope: 'sub' }, function(err, res) {
+    client.search('ou=people,dc=bla,dc=com', { filter: '(uid=*)', scope: 'sub' }, function(err, res) {
       let users = [];
       res.on('searchEntry', (entry) => users.push(entry.object));
       res.on('error', (err) => reject(err));
@@ -41,7 +41,7 @@ async function addUser(user) {
 function deleteUser(dn) {
   return new Promise((resolve, reject) => {
     client.del(dn, (err) => {
-      if (err) reject(err)
+      if (err) reject({ error: err })
       else resolve({ dn: dn })
     })
   })
@@ -70,7 +70,7 @@ function updateUser(user) {
 
 async function getNextUid() {
   const users = await getAllUsers();
-  return Math.max.apply(Math, users.map(user => { return user.uidNumber ? user.uidNumber : 0 ; })) + 1  
+  return Math.max.apply(Math, users.map(user => { return user.uidNumber ? user.uidNumber : 0 })) + 1  
 }
 
 module.exports.getAllUsers = getAllUsers;

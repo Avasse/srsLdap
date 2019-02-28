@@ -4,6 +4,15 @@
       <v-toolbar-title>LDAP</v-toolbar-title>
       <v-spacer/>
       <v-btn color="primary" dark @click="onAddClick()">Ajouter</v-btn>
+      <v-btn color="primary" dark @click="onExportClick()">Exporter</v-btn>
+      <div class="import">
+        <v-btn color="primary" type="file" @click="$refs.inputUpload.click()">Importer</v-btn>
+        <input 
+          v-show="false" 
+          ref="inputUpload" 
+          type="file" 
+          @change="onImportClick">
+      </div>
     </v-toolbar>
     <v-data-table :headers="headers" :items="users" class="elevation-1">
       <template slot="items" slot-scope="props">
@@ -15,16 +24,16 @@
         <td class="text-xs-right">{{ props.item.age }}</td>
         <td class="text-xs-right">{{ props.item.games }}</td>
         <td class="justify-center layout px-0">
-          <v-icon small class="mr-2" @click="onUpdateClick(props.item)">edit</v-icon>
-          <v-icon small @click="onDeleteClick(props.item)">delete</v-icon>
+          <v-icon v-if="loggedInUser.uid === props.item.uid || isAdmin" small class="mr-2" @click="onUpdateClick(props.item)">edit</v-icon>
+          <v-icon v-if="isAdmin" small @click="onDeleteClick(props.item)">delete</v-icon>
         </td>
       </template>
       <template slot="no-data">
-        <v-btn color="primary" @click="console.log('reset')">Reset</v-btn>
+        <v-btn color="primary" @click="init()">Reset</v-btn>
       </template>
     </v-data-table>
     <v-layout row justify-center>
-      <v-dialog v-model="deleteDialog" persistent max-width="290">
+      <v-dialog v-model="deleteDialog" persistent max-width="400">
         <v-card>
           <v-card-title class="headline">Confirm Deletion</v-card-title>
           <v-card-text>Are you sure you want to delete this user ?</v-card-text>
@@ -37,7 +46,7 @@
       </v-dialog>
     </v-layout>
 
-    <add-dialog
+    <users-dialog
       v-if="userDialog"
       :editable-user="selectedUser"
       @close="onUserDialogClose"
@@ -49,12 +58,12 @@
 </template>
 
 <script>
-  import AddDialog                  from '@/components/AddDialog'
+  import UsersDialog                  from '@/components/users/UsersDialog'
   import { mapActions, mapGetters } from 'vuex'
 
   export default {
     name      : 'Users',
-    components: { AddDialog },
+    components: { UsersDialog },
     data      : () => ({
       headers: [
         { text: 'Name', value: 'cn' },
@@ -75,11 +84,15 @@
 
     computed: {
       ...mapGetters({
-        users: 'ldapUsers/users'
+        users       : 'ldapUsers/users',
+        isAdmin     : 'user/isAdmin',
+        isLoggedIn  : 'user/isLoggedIn',
+        loggedInUser: 'user/user'
       })
     },
 
     created () {
+      if (!this.isLoggedIn) this.$router.push({name: 'Login'})
       this.init()
     },
 
@@ -102,9 +115,9 @@
       },
 
       async onAddConfirm (user) {
-        // this.userDialog = false
+        this.userDialog = false
         await this.addUser(user)
-        // this.selectedUser = null
+        this.selectedUser = null
         this.init()
       },
 
@@ -135,6 +148,22 @@
       onUserDialogClose () {
         this.userDialog   = false
         this.selectedUser = null
+      },
+
+      onExportClick () {
+        let blob = new Blob([JSON.stringify(this.users)], {type:"application/json;charset=utf-8"});
+        saveAs(blob, "users.json");
+      },
+
+      async onImportClick (event) {
+        let reader = new FileReader();
+        reader.readAsText(event.target.files[0], 'UTF-8');
+        reader.onload = async (evt) => {
+          let users = JSON.parse(evt.target.result)
+          this.loaded = false
+          await Promise.all(users.map(async (user) => await this.addUser(user)));
+          this.init()
+        }
       }
     }
   }

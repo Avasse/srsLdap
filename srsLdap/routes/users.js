@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const usersLDAP = require('../utils/ldapUsers');
+const client = require('../utils/client');
 
 /* GET users listing. */
 router.get('/', (req, res, next) => {
@@ -8,7 +9,7 @@ router.get('/', (req, res, next) => {
   try {
     usersLDAP.getAllUsers().then(users => res.status(200).json(users));
   } catch (e) {
-    console.log(e);
+    res.status(404).send({error: e});
   }
 });
 
@@ -40,13 +41,27 @@ router.post('/', (req, res, next) => {
 /** DELETE user */
 router.put('/delete', (req, res, next) => {
   console.log("RUNNING DELETE USER --------------------------------");
-  usersLDAP.deleteUser(req.body.dn).then((err) => {
-  	if(err) {
-  		res.status(404).send({error: err});
+  usersLDAP.deleteUser(req.body.dn).then((datas) => {
+  	if(datas.error) {
+      res.status(404).send({error: datas.error});
   	} else {
-  		res.status(200).send({error: null});
+  		res.status(200).send({dn: req.body.dn});
   	}
   });
+});
+
+/** LOGIN user */
+router.post('/login', (req, res, next) => {
+  console.log("RUNNING POST LOGIN -------------------------------");
+  const user = req.body.user;
+  if (user.login === 'admin') {
+    res.status(200).json({isAdmin: true})
+  } else {
+    usersLDAP.getOneUser("uid=" + user.login + ',ou=people,dc=bla,dc=com').then((userLdap) => {
+      if (userLdap.userPassword === user.password) res.status(200).json({isAdmin: false, user: userLdap})
+      else res.status(404).json({err: 'Invalid Credentials'})
+    })
+  }
 });
 
 module.exports = router;
