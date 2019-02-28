@@ -7,59 +7,55 @@
       <v-card-text>
         <v-container grid-list-md>
           <v-layout wrap>
-            <div class="user">
-              <v-flex xs12>
-                <v-text-field
-                  v-model="user.userPassword"
-                  label="Password*"
-                  type="password"
-                  required/>
-              </v-flex>
-            </div>
-            <div v-if="isAdmin" class="admin">
-              <v-flex xs12 sm6 md4>
-                <v-text-field v-model="user.sn" label="Surname*" required/>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-text-field v-model="user.givenName" label="Given Name" required/>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-text-field v-model="user.cn" label="Common Name*" required/>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-text-field v-model="user.uid" label="Uid*" required/>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-text-field v-model="user.pseudo" label="Pseudo*" required/>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-text-field
-                  v-model="user.age"
-                  label="Age*"
-                  type="number"
-                  required/>
-              </v-flex>
-              <v-flex xs12>
-                <v-text-field v-model="user.mail" label="Email*" required/>
-              </v-flex>
-              <v-flex xs12 sm6 md6>
-                <v-text-field v-model="user.homeDirectory" label="Home directory*" required/>
-              </v-flex>
-              <v-flex xs12 sm6 md6>
-                <v-text-field v-model="user.loginShell" label="Login Shell*" required/>
-              </v-flex>
-              <v-flex xs12 sm6>
-                <v-select
-                  v-model="user.games"
-                  :items="games"
-                  multiple
-                  label="Games*"
-                  required/>
-              </v-flex>
-              <v-flex xs12 sm6>
-                <v-text-field v-model="user.steamAccount" label="Steam Account*" required/>
-              </v-flex>
-            </div>
+            <v-flex xs12>
+              <v-text-field
+                v-model="user.userPassword"
+                label="Password*"
+                type="password"
+                required/>
+            </v-flex>
+            <v-flex v-if="isAdmin" xs12 sm6 md4>
+              <v-text-field v-model="user.sn" label="Surname*" required/>
+            </v-flex>
+            <v-flex v-if="isAdmin" xs12 sm6 md4>
+              <v-text-field v-model="user.givenName" label="Given Name" required/>
+            </v-flex>
+            <v-flex v-if="isAdmin" xs12 sm6 md4>
+              <v-text-field v-model="user.cn" label="Common Name*" required/>
+            </v-flex>
+            <v-flex v-if="isAdmin" xs12 sm6 md4>
+              <v-text-field v-model="user.uid" label="Uid*" required/>
+            </v-flex>
+            <v-flex v-if="isAdmin" xs12 sm6 md4>
+              <v-text-field v-model="user.pseudo" label="Pseudo*" required/>
+            </v-flex>
+            <v-flex v-if="isAdmin" xs12 sm6 md4>
+              <v-text-field
+                v-model="user.age"
+                label="Age*"
+                type="number"
+                required/>
+            </v-flex>
+            <v-flex v-if="isAdmin" xs12>
+              <v-text-field v-model="user.mail" label="Email*" required/>
+            </v-flex>
+            <v-flex v-if="isAdmin" xs12 sm6 md6>
+              <v-text-field v-model="user.homeDirectory" label="Home directory*" required/>
+            </v-flex>
+            <v-flex v-if="isAdmin" xs12 sm6 md6>
+              <v-text-field v-model="user.loginShell" label="Login Shell*" required/>
+            </v-flex>
+            <v-flex v-if="isAdmin" xs12 sm6>
+              <v-select
+                v-model="user.games"
+                :items="games"
+                multiple
+                label="Games*"
+                required/>
+            </v-flex>
+            <v-flex v-if="isAdmin" xs12 sm6>
+              <v-text-field v-model="user.steamAccount" label="Steam Account*" required/>
+            </v-flex>
           </v-layout>
         </v-container>
       </v-card-text>
