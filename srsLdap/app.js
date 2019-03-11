@@ -50,6 +50,10 @@ app.use((err, req, res, next) => {
   res.render('error');
 });
 
-LDAP.connect('cn=admin', 'bla');
+try {
+  LDAP.connect('cn=admin', 'bla');
+} catch (e) {
+  console.log(e)
+}
 
 module.exports = app;
