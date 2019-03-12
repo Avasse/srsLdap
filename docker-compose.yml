@@ -1,0 +1,45 @@
+version: "3"
+services:
+  loadbalancer:
+    image: traefik
+    command: 
+      --docker \
+      --docker.watch \
+      --web \
+      --loglevel=DEBUG
+    ports:
+      - 80:80
+      - 8080:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  ldapserver:
+    image: openldap:1.0
+    volumes:
+      - "./data:/data"
+    ports:
+      - "389:389"
+
+  back:
+    depends_on: 
+      - ldapserver
+    image: back:1.4
+    ports:
+      - 3000:3000
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+    command:
+      sh -c 'npm i && npm run start'
+
+  front:
+    image: front:1.3
+    ports:
+      - 8081:8081
+    environment:
+      - PORT=8081
+    command:
+      sh -c 'npm i && npm run serve'
+
+    
+      

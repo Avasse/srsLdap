@@ -26,22 +26,22 @@ const mutations = {
 
 const actions = {
   async fetchGroups ({ commit }) {
-    const res = await axios.get('http://localhost:3000/groups/').then(res => res.data)
+    const res = await axios.get('http://back.srsldap/groups/').then(res => res.data)
     commit('SET_GROUPS', res)
   },
   
   async addGroup ({ commit }, group) {
-    const res = await axios.put('http://localhost:3000/groups/', { group: group }).then(res => res.error)
+    const res = await axios.put('http://back.srsldap/groups/', { group: group }).then(res => res.error)
     if (res === null) commit('ADD_GROUP', group)
   },
   
   async updateGroup ({ commit }, group) {
-    const res = await axios.post('http://localhost:3000/groups/', { group: group }).then(res => res.error)
+    const res = await axios.post('http://back.srsldap/groups/', { group: group }).then(res => res.error)
     if (res === null) commit('UPDATE_GROUP', res)
   },
   
   async deleteGroup ({ commit }, dn) {
-    const res = await axios.put('http://localhost:3000/groups/delete', { dn: dn }).then(res => res.error)
+    const res = await axios.put('http://back.srsldap/groups/delete', { dn: dn }).then(res => res.error)
     if (res === null) commit('DELETE_GROUP', res)
   }
 }

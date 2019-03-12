@@ -1,7 +1,7 @@
 const ldap = require('ldapjs');
 
 const client = ldap.createClient({
-    url: 'ldap://127.0.0.1:389'
+    url: 'ldap://ldapserver:389'
 });
 
 function connect(login, password) {

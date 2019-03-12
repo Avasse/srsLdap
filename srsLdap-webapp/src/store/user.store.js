@@ -24,7 +24,7 @@ const mutations = {
 
 const actions = {
   async login ({ commit }, user) {
-    const res = await axios.post('http://localhost:3000/users/login/', {user: user}).then(res => res.data)
+    const res = await axios.post('http://back.srsldap/users/login/', {user: user}).then(res => res.data)
     if (res.isAdmin) commit('SET_ADMIN')
     if (res.user && !res.isAdmin) commit('SET_USER', res.user)
   },
