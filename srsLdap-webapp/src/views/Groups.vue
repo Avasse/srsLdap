@@ -3,10 +3,11 @@
     <v-toolbar flat color="white">
       <v-toolbar-title>LDAP</v-toolbar-title>
       <v-spacer/>
-      <v-btn color="primary" dark @click="onAddClick()">Ajouter</v-btn>
-      <v-btn color="primary" dark @click="onExportClick()">Exporter</v-btn>
+      <v-btn color="primary" v-if="isAdmin" dark @click="onDeleteAll()">Tout Supprimer</v-btn>
+      <v-btn color="primary" v-if="isAdmin" dark @click="onAddClick()">Ajouter</v-btn>
+      <v-btn color="primary" v-if="isAdmin" dark @click="onExportClick()">Exporter</v-btn>
       <div class="import">
-        <v-btn color="primary" type="file" @click="$refs.inputUpload.click()">Importer</v-btn>
+        <v-btn color="primary" v-if="isAdmin" type="file" @click="$refs.inputUpload.click()">Importer</v-btn>
         <input 
           v-show="false" 
           ref="inputUpload" 
@@ -154,6 +155,12 @@
           await Promise.all(groups.map(async (group) => await this.addGroup(group)));
           this.init()
         }
+      },
+
+      async onDeleteAll () {
+        this.loaded = false
+        await Promise.all(this.groups.map(async (group) => await this.deleteGroup(group.dn)));
+        this.init()
       }
     }
   }

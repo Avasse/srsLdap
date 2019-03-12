@@ -70,7 +70,7 @@ function updateUser(user) {
 
 async function getNextUid() {
   const users = await getAllUsers();
-  return Math.max.apply(Math, users.map(user => { return user.uidNumber ? user.uidNumber : 0 })) + 1  
+  return users && users.length > 0 ? Math.max.apply(Math, users.map(user => user.uidNumber)) + 1 : 10000
 }
 
 module.exports.getAllUsers = getAllUsers;

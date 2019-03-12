@@ -70,7 +70,7 @@ function updateGroup(group) {
 
 async function getNextGroupUid() {
   const groups = await getAllGroups();
-  return Math.max.apply(Math, groups.map(group => { return group.gidNumber ? group.gidNumber : 0 })) + 1  
+  return groups && groups.length > 0 ? Math.max.apply(Math, groups.map(group => { return group.gidNumber ? group.gidNumber : 0 })) + 1 : 10000
 }
   
 module.exports.getAllGroups = getAllGroups;

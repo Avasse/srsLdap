@@ -15,13 +15,13 @@
                 required/>
             </v-flex>
             <v-flex v-if="isAdmin" xs12 sm6 md4>
-              <v-text-field v-model="user.sn" label="Surname*" required/>
+              <v-text-field v-model="user.sn" label="Surname*" @keyup.native="editCN" required/>
             </v-flex>
             <v-flex v-if="isAdmin" xs12 sm6 md4>
-              <v-text-field v-model="user.givenName" label="Given Name" required/>
+              <v-text-field v-model="user.givenName" label="Given Name" @keyup.native="editCN" required/>
             </v-flex>
             <v-flex v-if="isAdmin" xs12 sm6 md4>
-              <v-text-field v-model="user.cn" label="Common Name*" required/>
+              <v-text-field v-model="user.cn" label="Common Name*" readonly required/>
             </v-flex>
             <v-flex v-if="isAdmin" xs12 sm6 md4>
               <v-text-field v-model="user.uid" label="Uid*" required/>
@@ -81,12 +81,6 @@
       },
     },
 
-    computed: {
-      ...mapGetters({
-        isAdmin: 'user/isAdmin'
-      })
-    },
-
     data () {
       return {
         dialog: true,
@@ -109,14 +103,25 @@
       }
     },
 
+    computed: {
+      ...mapGetters({
+        isAdmin: 'user/isAdmin'
+      })
+    },
+
     created () {
       if (this.editableUser && Object.keys(this.editableUser).length > 0) this.user = JSON.parse(JSON.stringify(this.editableUser))
+      this.editCN()
     },
 
     methods: {
       onSave () {
         if (this.editableUser && Object.keys(this.editableUser).length > 0) this.$emit('update', this.user)
         else this.$emit('add', this.user)
+      },
+
+      editCN () {
+        if (this.user && this.user.givenName && this.user.sn) this.user.cn = this.user.sn + ' ' + this.user.givenName
       }
     },
   }

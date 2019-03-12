@@ -54,8 +54,10 @@ router.put('/delete', (req, res, next) => {
 router.post('/login', (req, res, next) => {
   console.log("RUNNING POST LOGIN -------------------------------");
   const user = req.body.user;
-  if (user.login === 'admin') {
+  if (user.login === 'admin' && user.password === 'bla') {
     res.status(200).json({isAdmin: true})
+  } else if (user.login === 'admin' && user.password === 'bla') {
+    res.status(404).json({err: 'Invalid Credentials'})
   } else {
     usersLDAP.getOneUser("uid=" + user.login + ',ou=people,dc=bla,dc=com').then((userLdap) => {
       if (userLdap.userPassword === user.password) res.status(200).json({isAdmin: false, user: userLdap})
